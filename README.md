@@ -80,3 +80,4 @@ Of course it is not ideal to have a device with an open telnet in your home
 network, so this device got its own vlan in my setup where only it and the home
 assistant have access.
 
+[1] https://gist.github.com/7marcus9/d46bd16fda8fa2c736a09c4dadd0621e
