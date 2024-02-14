@@ -1,0 +1,36 @@
+#!/bin/sh
+
+
+# initialize ethernety interface
+insmod /lib/modules/2.6.31/net/athrs_gmac.ko
+ifconfig eth1 hw ether 00:0B:3B:11:22:35
+ip link set up dev eth1
+
+# start dhcpclient
+/opt/bin/busybox udhcpc -i eth1 -s /opt/udhcpc.sh &
+
+mount /var
+mount /proc
+
+# needed for telnetd
+mount /dev/pts
+
+
+# /etc/passwd is a symlink to /var/etc/passwd for som reason and that only lives
+# in /var.tar so we have to extract it.
+cd /
+tar -xf var.tar
+
+# start telnet so we have comfortable access to a shell
+/opt/bin/busybox/telnetd
+
+
+# enable the zwave chip
+insmod /lib/modules/2.6.31/dvl_zwave_spi.ko
+zwprogrammer -Z on
+
+# export serial over tcp
+/opt/bin/socat tcp-l:5555,reuseaddr,fork file:/dev/ttyS1,b115200,raw,echo=0 &
+
+# start a shell
+/bin/sh
